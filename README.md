@@ -1,2 +1,2 @@
-# py-teleporter
-ETI file teleporter
+# passfile
+Secure file sending

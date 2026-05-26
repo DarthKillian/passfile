@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS links;
+DROP TABLE IF EXISTS files;
+
+CREATE TABLE links (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT UNIQUE NOT NULL,
+    created_at DATETIME,
+    expires_at DATETIME
+);
