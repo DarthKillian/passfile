@@ -7,14 +7,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from passfile.db.db import get_db
 
-dumb = {
-    "uuid": uuid.uuid4()
-}
-
-bp = Blueprint('link', __name__, url_prefix='/upload')
-@bp.route('/')
-def hello():
-    return dumb
+bp = Blueprint('code', __name__, url_prefix='/upload')
+@bp.route('/', methods=['GET', 'POST'])
+def upload_files():
+    if request.method == 'POST':
+        print(request.files)
+        return { "status": "received" }
 
 @bp.route('/getcode', methods=('GET', 'POST'))
 def getuuid():

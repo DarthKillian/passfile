@@ -1,8 +1,7 @@
 import os
 from flask import Flask
-from .http import code
-from .db import db
-from .http import index
+from passfile.db import db
+from passfile.http import index, code
 
 def register_bp(app):
     app.register_blueprint(index.bp)
@@ -12,7 +11,8 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'passfile.sqlite')
+        DATABASE=os.path.join(app.instance_path, 'passfile.sqlite'),
+        UPLOAD_FOLDER='./uploads'
     )
 
     register_bp(app)
