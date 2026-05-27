@@ -122,7 +122,7 @@ passwordPrompt.addEventListener('hidden.bs.modal', () => {
         (async () => {
             code = await getCode();
             const payload = await PassfileCrypto.buildUploadPayload(fileInput.files, password, code);
-            let request = await fetch("/upload", {
+            let request = await fetch("/upload/", {
                 method: "POST",
                 body: payload
             });
