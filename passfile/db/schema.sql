@@ -7,3 +7,11 @@ CREATE TABLE links (
     created_at DATETIME,
     expires_at DATETIME
 );
+
+CREATE TABLE files (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    link_id INTEGER NOT NULL,
+    filename TEXT NOT NULL,
+    uuid TEXT UNIQUE NOT NULL,
+    FOREIGN KEY(link_id) REFERENCES links(id)
+);
