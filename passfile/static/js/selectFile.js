@@ -35,35 +35,77 @@ const passwordInvalid = (input) => {
     }
 };
 
+const processFiles = async () => {
+
+    const getCode = async () => {
+        let request = await fetch("/code/gencode", {
+            method: "POST",
+        });
+        let data = await request.json();
+        document.getElementById('code').textContent = `Your Share Code: ${data.code}`;
+        return data.code;
+    };
+
+    let code = await getCode();
+
+    let totalBytes = 0;
+    if (fileInput.files.length == 0) return;
+
+    document.querySelector('#listFiles').innerHTML = '';
+    let fileCounter = 0;
+    for (const file of fileInput.files) {
+        totalBytes += file.size;
+        fileCounter += 1;
+
+        const li = document.createElement('li');
+        li.classList.add('list-group-item', 'd-flex', 'justify-content-between');
+
+        const fileSpan = document.createElement('span');
+        const nameSpan = document.createElement('span');
+        const sizeSpan = document.createElement('span');
+        const iconSpan = document.createElement('span');
+        const icon = document.createElement('i');
+        iconSpan.id = `success_${fileCounter}`;
+        iconSpan.style.display = "none";
+        iconSpan.style.paddingRight = "5px";
+        icon.classList.add('far', 'fa-check-circle', 'text-success');
+        icon.style.fontSize = "20px";
+
+        iconSpan.append(icon);
+
+        nameSpan.textContent = file.name;
+        sizeSpan.textContent = formatSize(file.size);
+        fileSpan.append(iconSpan, nameSpan);
+        li.appendChild(fileSpan);
+        li.appendChild(sizeSpan);
+        listFiles.append(li);
+
+        (async () => {
+            
+            const payload = await PassfileCrypto.buildUploadPayload(file, password, code);
+            let request = await fetch("/drop/upload", {
+                method: "POST",
+                body: payload
+            });
+
+            let response = await request.json();
+            console.log(response);
+        })();
+    }
+    totalFileSize.textContent = formatSize(totalBytes);
+
+};
+
 // Select file(s) even listener
 selectBtn.addEventListener('click', () => fileInput.click());
 
 // If files are selected, we change the view and iterate over the files to get their name and size
 fileInput.addEventListener('change', () => {
-    password = null;
-    let totalBytes = 0;
-    if (fileInput.files.length == 0) return;
     topHeading.style.display = "none";
     fileSelectDiv.style.display = "none";
     bottomView.style.display = "none";
-    document.querySelector('#listFiles').innerHTML = '';
-    for (const file of fileInput.files) {
-        totalBytes += file.size;
 
-        const li = document.createElement('li');
-        li.classList.add('list-group-item', 'd-flex', 'justify-content-between');
-
-        const nameSpan = document.createElement('span');
-        const sizeSpan = document.createElement('span');
-
-        nameSpan.textContent = file.name;
-        sizeSpan.textContent = formatSize(file.size);
-
-        li.appendChild(nameSpan);
-        li.appendChild(sizeSpan);
-        listFiles.append(li)
-    }
-    totalFileSize.textContent = formatSize(totalBytes);
+    password = null;
     passwordInput.value = '';
     passwordModal.show();
 });
@@ -109,27 +151,7 @@ passwordPrompt.addEventListener('hidden.bs.modal', () => {
         uploadFiles.classList.remove('d-none');
         uploadFiles.classList.add('d-flex');
         passwordInvalidTxt.style.display = "none";
-
-        const getCode = async () => {
-            let request = await fetch("/upload/getcode", {
-                method: "POST",
-            });
-            let data = await request.json();
-            document.getElementById('code').textContent = `Your Share Code: ${data.code}`;
-            return data.code;
-        };
-
-        (async () => {
-            code = await getCode();
-            const payload = await PassfileCrypto.buildUploadPayload(fileInput.files, password, code);
-            let request = await fetch("/upload/", {
-                method: "POST",
-                body: payload
-            });
-            
-            let response = await request.json();
-            console.log(response);
-        })();
+        processFiles();
     }
 
 

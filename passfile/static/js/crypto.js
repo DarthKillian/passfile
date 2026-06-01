@@ -76,12 +76,10 @@ const PassfileCrypto = (() => {
     };
 
     // Helper: build a FormData payload with the encrypted blob + original filename + code
-    const buildUploadPayload = async (files, password, transferCode) => {
+    const buildUploadPayload = async (file, password, transferCode) => {
         const formData = new FormData();
-        for (const file of files) {
-            const encryptedBlob = await encryptFile(file, password, transferCode);
-            formData.append("file", encryptedBlob, file.name);
-        }
+        const encryptedBlob = await encryptFile(file, password, transferCode);
+        formData.append("file", encryptedBlob, file.name);
         formData.append("code", transferCode);
 
         return formData;
