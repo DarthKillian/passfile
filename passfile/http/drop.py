@@ -21,9 +21,17 @@ def upload_files():
             except Exception:
                 return jsonify({ "status": "500", "message": "Failed to save the file. Please try again." })
             else:
-                create_file = dropModel.create(unique_file, 1234)
+                create_file = dropModel.create(unique_file)
                 if not create_file:
                     os.remove(f"{os.path.join(current_app.config['UPLOAD_FOLDER'])}/{unique_file['uuid_name']}")
                     return jsonify({"status": "500", "message": "Failed to save the file. Please try again."})
                 else:
                     return jsonify({ "status": "200" })
+
+@bp.route('/<code>', methods=['GET', 'POST'])
+def view(code):
+    link = dropModel.view(code)
+    if not link:
+        return render_template('viewDrop.html')
+    else:        
+        return render_template('viewDrop.html', files = link)

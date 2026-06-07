@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if not files %}
+        <p class="text-warning">Link does not exist or has expired</p>
+    {% else %}
+        {% for file in files %}
+            <p class="text-light">{{ file['filename'] }}</p>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
