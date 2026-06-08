@@ -7,6 +7,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from passfile.models import dropModel
+from passfile.http import code
 
 bp = Blueprint('drop', __name__, url_prefix='/drop')
 @bp.route('/upload', methods=['GET', 'POST'])
@@ -21,12 +22,21 @@ def upload_files():
             except Exception:
                 return jsonify({ "status": "500", "message": "Failed to save the file. Please try again." })
             else:
-                create_file = dropModel.create(unique_file)
-                if not create_file:
+                upload = dropModel.upload(unique_file)
+                if not upload:
                     os.remove(f"{os.path.join(current_app.config['UPLOAD_FOLDER'])}/{unique_file['uuid_name']}")
                     return jsonify({"status": "500", "message": "Failed to save the file. Please try again."})
                 else:
                     return jsonify({ "status": "200" })
+                
+@bp.route('/create', methods=['GET', 'POST'])
+def create_link():
+    if request.method == 'POST':
+        gen_code = code.getuuid()
+        data = {"code": gen_code.get_json()['code']}
+        save_code = dropModel.create_link(data)
+        print(save_code)
+        return gen_code
 
 @bp.route('/<code>', methods=['GET', 'POST'])
 def view(code):

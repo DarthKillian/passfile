@@ -47,7 +47,6 @@ def create_link(data):
     db = get_db()
     timestamp = datetime.now()
     expire = timestamp + timedelta(hours=24)
-
     try:
         db.execute(
             "INSERT INTO links (code, created_at, expires_at) VALUES (?, ?, ?)", 
@@ -59,11 +58,12 @@ def create_link(data):
         if "UNIQUE constraint" in str(e):
             return get_link(data['code'])
         else:
+            print(e)
             return False
     else:
         return get_link(data['code'])
 
-def create(data):
+def upload(data):
     code_id = create_link(data)
 
     if not code_id:

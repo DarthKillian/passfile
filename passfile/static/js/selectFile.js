@@ -91,7 +91,7 @@ if (window.location.href == "http://127.0.0.1:5000/") {
                 iconSpan.id = `${response.status}_${fileCounter}`;
                 iconSpan.style.display = "inline-block";
                 iconSpan.append(icon);
-                // Display 
+                // Display success or failure icons
                 if (parseInt(response.status) == 200) {
                     icon.classList.add('far', 'fa-check-circle', 'text-success');
                 } else {
