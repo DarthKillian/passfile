@@ -124,7 +124,7 @@ if (window.location.href == "http://127.0.0.1:5000/") {
         passwordInput.focus();
     });
 
-    // Hitting enter while in the password field triggers a submit. We want to trigger the savePasswordBtn which 
+    // Hitting enter while in the password field triggers a submit. We want to trigger the savePasswordBtn which checks if the password is valid
     passwordForm.addEventListener('submit', (e) => {
         e.preventDefault();
         savePasswordBtn.click();

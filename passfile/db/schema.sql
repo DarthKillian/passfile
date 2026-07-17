@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS files;
 CREATE TABLE links (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     code TEXT UNIQUE NOT NULL,
+    hash TEXT NOT NULL,
     created_at DATETIME,
     expires_at DATETIME
 );
