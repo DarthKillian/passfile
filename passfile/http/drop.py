@@ -1,22 +1,26 @@
 from datetime import datetime, timedelta
-import uuid, os
+import uuid, os, bcrypt
 
 from flask import (
     Blueprint, flash, redirect, render_template, request, session, url_for, jsonify, current_app
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
+
 from passfile.models import dropModel
 from passfile.http import code
 
+# File upload route
 bp = Blueprint('drop', __name__, url_prefix='/drop')
 @bp.route('/upload', methods=['GET', 'POST'])
 def upload_files():
     if request.method == 'POST':
         code = request.form.get('code')
+        password = request.form.get('password').encode('utf-8') # Convert password to byte array for hashing
+        hash = bcrypt.hashpw(password, bcrypt.gensalt()) # hash password
         for file in (request.files.getlist('file')):
             extension = file.filename.rsplit('.', 1)[1]
-            unique_file = {"original_name": file.filename, "uuid_name": f"{str(uuid.uuid4())}.{extension}", "code": code}
+            unique_file = {"original_name": file.filename, "uuid_name": f"{str(uuid.uuid4())}.{extension}", "hash": hash, "code": code}
             try:
                 file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], unique_file['uuid_name']))
             except Exception:

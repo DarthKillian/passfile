@@ -49,8 +49,8 @@ def create_link(data):
     expire = timestamp + timedelta(hours=24)
     try:
         db.execute(
-            "INSERT INTO links (code, created_at, expires_at) VALUES (?, ?, ?)", 
-            (data['code'], timestamp, expire)
+            "INSERT INTO links (code, hash, created_at, expires_at) VALUES (?, ?, ?, ?)", 
+            (data['code'], data['hash'], timestamp, expire)
         )
         db.commit()
 

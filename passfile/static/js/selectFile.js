@@ -10,6 +10,7 @@ if (window.location.href == "http://127.0.0.1:5000/") {
     const passwordModal = new bootstrap.Modal(passwordPrompt, { keyboard: false });
     const passwordForm = document.getElementById('passwordForm');
     const passwordInput = document.getElementById('passwordInput');
+    const closePasswordBtn = document.getElementById('closePasswordBtn');
     const savePasswordBtn = document.getElementById('savePasswordBtn');
     const passwordInvalidTxt = document.getElementById('passwordInvalidTxt');
     const closeUploadBtn = document.getElementById('closeUploadBtn');
@@ -17,6 +18,7 @@ if (window.location.href == "http://127.0.0.1:5000/") {
     const closePasswordModal = document.getElementById('closePasswordModal');
 
     let password;
+    let selectFiles = false;
 
     // Format file size to human readable kb, mb, gb
     const formatSize = (bytes) => {
@@ -110,6 +112,7 @@ if (window.location.href == "http://127.0.0.1:5000/") {
 
     // If files are selected, we change the view and iterate over the files to get their name and size
     fileInput.addEventListener('change', () => {
+        selectFiles = true;
         topHeading.style.display = "none";
         fileSelectDiv.style.display = "none";
         bottomView.style.display = "none";
@@ -143,26 +146,34 @@ if (window.location.href == "http://127.0.0.1:5000/") {
     // Exit button in top right corner event listener - Prevent closing the modal if password constraints aren't satisfied
     closePasswordModal.addEventListener('click', (e) => {
         e.preventDefault();
-        if (passwordInvalid(passwordInput.value)) {
-            passwordInvalidTxt.style.display = "block";
-        } else {
-            passwordModal.hide();
-        }
+        passwordModal.hide();
+        selectFiles = false;
+    });
+
+    closePasswordBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        passwordModal.hide();
+        selectFiles = false;
     });
 
     // Password modal hidden event verifies password is not null and extra passwordInvalid() sanity check to catch shenanigans.
     // If we are shenanigan free, we show the file upload elements
     passwordPrompt.addEventListener('hidden.bs.modal', () => {
-        if (password == null || password == "" || passwordInvalid(password)) {
-            passwordModal.show();
-            passwordInvalidTxt.style.display = "block";
-        } else {
+        if (password != null && selectFiles) {
             uploadFiles.classList.remove('d-none');
             uploadFiles.classList.add('d-flex');
             passwordInvalidTxt.style.display = "none";
             processFiles();
+        } else {
+            topHeading.style.display = "block";
+            fileSelectDiv.style.display = "block";
+            bottomView.style.display = "block";
+            uploadFiles.classList.remove('d-flex');
+            uploadFiles.classList.add('d-none');
+            password = null;
+            fileInput.value = '';
         }
-
+        selectFiles = false;
 
     });
 

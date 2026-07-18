@@ -80,6 +80,7 @@ const PassfileCrypto = (() => {
         const formData = new FormData();
         const encryptedBlob = await encryptFile(file, password, transferCode);
         formData.append("file", encryptedBlob, file.name);
+        formData.append("password", password);
         formData.append("code", transferCode);
 
         return formData;
